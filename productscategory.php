@@ -57,8 +57,7 @@ class ProductsCategory extends Module
 		$id_product = (int)$params['product']->id;
 		$product = $params['product'];
 
-		$cache_id = 'productscategory|'.$id_product.'|';
-		$cache_id .= isset($params['category']->id_category) ?(int)$params['category']->id_category : (int)$product->id_category_default;
+		$cache_id = $this->buildCacheKey($params);
 
 		if (!$this->isCached('productscategory.tpl', $this->getCacheId($cache_id))) {
 			$category = false;
@@ -147,11 +146,8 @@ class ProductsCategory extends Module
 		if (!isset($params['product'])) {
             return;
         }
-		$id_product = (int)$params['product']->id;
-		$product = $params['product'];
 
-		$cache_id = 'productscategory|'.$id_product.'|'.(isset($params['category']->id_category) ? (int)$params['category']->id_category : (int)$product->id_category_default);
-		$this->_clearCache('productscategory.tpl', $this->getCacheId($cache_id));
+		$this->_clearCache('productscategory.tpl', $this->getCacheId($this->buildCacheKey($params)));
 	}
 
 	public function hookUpdateProduct($params)
@@ -159,11 +155,8 @@ class ProductsCategory extends Module
 		if (!isset($params['product'])) {
             return;
         }
-		$id_product = (int)$params['product']->id;
-		$product = $params['product'];
 
-		$cache_id = 'productscategory|'.$id_product.'|'.(isset($params['category']->id_category) ? (int)$params['category']->id_category : (int)$product->id_category_default);
-		$this->_clearCache('productscategory.tpl', $this->getCacheId($cache_id));
+		$this->_clearCache('productscategory.tpl', $this->getCacheId($this->buildCacheKey($params)));
 	}
 
 	public function hookDeleteProduct($params)
@@ -171,10 +164,20 @@ class ProductsCategory extends Module
 		if (!isset($params['product'])) {
             return;
         }
-		$id_product = (int)$params['product']->id;
-		$product = $params['product'];
 
-		$cache_id = 'productscategory|'.$id_product.'|'.(isset($params['category']->id_category) ? (int)$params['category']->id_category : (int)$product->id_category_default);
-		$this->_clearCache('productscategory.tpl', $this->getCacheId($cache_id));
+		$this->_clearCache('productscategory.tpl', $this->getCacheId($this->buildCacheKey($params)));
 	}
+
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+	protected function buildCacheKey(array $params): string
+    {
+        $id_product = (int)$params['product']->id;
+        $product = $params['product'];
+
+        return 'productscategory|'.$id_product.'|'.(isset($params['category']->id_category) ? (int)$params['category']->id_category : (int)$product->id_category_default);
+    }
 }
